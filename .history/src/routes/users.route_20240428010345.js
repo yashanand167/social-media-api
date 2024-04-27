@@ -25,18 +25,13 @@ router.post(
 
 router.post("/login", logInUser);
 
-router.post(
-  "/post",
-  upload.fields([
-    {
-      name: "Image",
-    },
-    {
-      name: "Video",
-    },
-  ]),
-  postImageOrVideos
-),
+router.post("/post",upload.fields([
+  {
+    name: "Image",
+  },
+  {
+    name: "Video",
+  },, postImageOrVideos),
   router.post(
     "/editPost",
     upload.fields([
