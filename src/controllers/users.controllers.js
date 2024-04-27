@@ -29,19 +29,19 @@ export const registerUser = async (req, res) => {
     throw new APIerror(409, "User with email or username already exists");
   }
 
-//   const profileImageLocalPath = await req.files?.profileImage[0]?.path;
-//   const avatarLocalPath = await req.files?.avatar[0]?.path;
+  const profileImageLocalPath = await req.files?.profileImage[0]?.path;
+  const avatarLocalPath = await req.files?.avatar[0]?.path;
 
-//   const profileImage = await uploadonCloudinary(profileImageLocalPath);
-//   const avatar = await uploadonCloudinary(avatarLocalPath);
+  const profileImage = await uploadonCloudinary(profileImageLocalPath);
+  const avatar = await uploadonCloudinary(avatarLocalPath);
 
   const newUser = await User.create({
     username,
     email,
     password,
-    // avatar: avatar?.url || "",
+    avatar: avatar?.url || "",
     bio,
-    // profileImage: profileImage?.url || "",
+    profileImage: profileImage?.url || "",
   });
 
   const createdUser = await User.findById(newUser._id).select("-password");
