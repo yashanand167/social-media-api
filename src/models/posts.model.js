@@ -5,8 +5,8 @@ const postSchema = mongoose.Schema({
         type: String,
         ref: "User",
         caption: String,
-        Image: String, //upload To Cloudinary
-        Video: String, //upload To Cloudinary
+        Image: String, 
+        Video: String, 
         createdAt: {
             type: Date,
             default: Date.now()

@@ -4,75 +4,67 @@ import { APIerror } from "../utils/APierror.js";
 import { APIresponse } from "../utils/APIresponse.js";
 import { uploadonCloudinary } from "../utils/cloudinary.js";
 
-const postImageOrVideos = async (req, res) => {
+export const postImageOrVideos = async (req, res) => {
   let { username, caption } = req.body;
 
-  // const user = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
   console.log(username);
 
-  // if (!user) {
-  //   throw new APIerror(404, "User not Found");
-  // }
+  if (!user) {
+     throw new APIerror(404, "User not Found");
+  }
 
-  // const ImagePath = await req.files?.Image?.path;
-  // const videoPath = await req.files?.Video?.path;
+  const ImagePath = req.files?.Image?.path;
+  const videoPath = req.files?.Video?.path;
 
-  // const postImage = await uploadonCloudinary(ImagePath);
-  // const postVideo = await uploadonCloudinary(videoPath);
+  if (!ImagePath || !videoPath) {
+    caption = "";
+  }
 
-  // if (!postImage || !postVideo) {
-  //   caption = "";
-  // }
+  const post = await Post.create({
+    user: user._id,
+    ImagePath: ImagePath,
+    videoPath: videoPath,
+    caption: Post.caption,
+  });
 
-  // const post = await Post.create({
-  //   user: user._id,
-  //   postImage: postImage?.url || "",
-  //   postVideo: postVideo?.url || "",
-  //   caption,
-  // });
+  await post.save();
+  const createdPost = await Post.findById(post._id)
 
-  // if (!post) {
-  //   throw new APIerror(500, "Internal Server Error");
-  // }
-
-  // await post.save();
+  if (!createdPost){
+    throw new APIerror(500, "Internal Server Error")
+  }
 
   return res
     .status(200)
-    .json(new APIresponse("Post uploaded successfully", post, 200));
+    .json(new APIresponse("Post uploaded successfully", createdPost, 200));
 };
 
-const editPost = async (req, res) => {
-  // const{username} = req.body;
-  // if(!username){
-  //   throw new APIerror(404, "User not found")
-  // }
+export const editPost = async (req, res) => {
+  const{username} = req.body;
+  if(!username){
+     throw new APIerror(404, "User not found")
+  }
 
-  // const postId = req.params.postId;
-  const { postId } = req.params;
+  const postId = req.params.postId;
 
   console.log(postId);
   const post = await Post.findById(postId);
 
   if (!post) {
-    // throw new APIerror(404, "Post doesn't exist");
-    console.log("Damn it post is not there!");
-    process.exit();
+    throw new APIerror(404, "Post doesn't exist");
   }
 
   const ImagePath = req.files?.Image?.path;
   const VideoPath = req.files?.Video?.path;
 
-  const image = await uploadonCloudinary(ImagePath);
-  const video = await uploadonCloudinary(VideoPath);
-
   const updatePost = Post.findByIdAndUpdate(
     {
       $set: {
         caption: req.body.caption || post.caption,
-        image: image?.url || post.image,
-        video: video?.url || post.video,
+        ImagePath: ImagePath?.url || post.ImagePath,
+        VideoPath: VideoPath?.url || post.VideoPath,
       },
     },
     {
@@ -90,7 +82,7 @@ const editPost = async (req, res) => {
 };
 
 //TODO: write controllers for finding and deleting post
-const getPost = async (req, res) => {
+export const getPost = async (req, res) => {
   // const user = await User.findOne({ username });
 
   // if (!user) {
@@ -99,7 +91,7 @@ const getPost = async (req, res) => {
 
   const { postId } = req.body;
   console.log(postId);
-  // const getpost = await post.findById();
+  const getpost = await post.findById();
 
   if (!getpost) {
     throw new APIerror(404, "Post not found");
@@ -108,7 +100,7 @@ const getPost = async (req, res) => {
   return res.status(200).json(new APIresponse(200, getpost, "Post found"));
 };
 
-const deletePost = async (req, res) => {
+export const deletePost = async (req, res) => {
   const post = Post.req.params;
 
   if (!post) {
@@ -116,4 +108,4 @@ const deletePost = async (req, res) => {
   }
 };
 
-export { postImageOrVideos, editPost };
+

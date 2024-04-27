@@ -18,9 +18,9 @@ app.use(urlencoded({ extended: true }));
 app.use(cookieParser())
 app.use(morgan('dev'))
 
-app.use("/api/v1/users",router);
+app.use("/api/v1/users", router);
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT ?? 3000
 
 app.get("/", (_,res)=>{
     res.json({

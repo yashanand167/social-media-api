@@ -1,10 +1,12 @@
-import express from "express";
 import { logInUser, registerUser } from "../controllers/Users.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { editPost, postImageOrVideos } from "../controllers/posts.controllers.js";
-import { getPost } from "../controllers/getPost.controller.js";
+import {
+  editPost,
+  postImageOrVideos,
+} from "../controllers/posts.controllers.js";
+import { Router } from "express";
 
-export const router = express.Router();
+export const router = Router();
 
 router.post(
   "/register",
@@ -21,20 +23,18 @@ router.post(
   registerUser
 );
 
-router.post("/login",logInUser)
+router.post("/login", logInUser);
 
-router.post("/post",
-  upload.fields([
-    {
-      name: "Image"
-    },
-    {
-      name: "Video"
-    }
-  ]),
-  postImageOrVideos
-);
-
-router.post("/editPost",editPost)
-
-router.post("/getpost",getPost)
+router.post("/post", postImageOrVideos),
+  router.post(
+    "/editPost",
+    upload.fields([
+      {
+        name: "Image",
+      },
+      {
+        name: "Video",
+      },
+    ]),
+    editPost
+  );
